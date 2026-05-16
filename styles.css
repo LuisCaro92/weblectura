@@ -1,0 +1,498 @@
+/* Variables del tema claro: colores, superficies, lineas y sombra global. */
+:root {
+  color-scheme: light;
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --surface-soft: #f1f4ef;
+  --text: #191a1c;
+  --muted: #62666d;
+  --line: #d9ded7;
+  --accent: #2d6b57;
+  --accent-strong: #174534;
+  --warn: #9f5b2a;
+  --shadow: 0 18px 40px rgba(17, 24, 39, 0.08);
+}
+
+/* Variables del tema oscuro: se activan cuando JavaScript cambia data-theme. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101214;
+  --surface: #181b1f;
+  --surface-soft: #20262a;
+  --text: #f5f1e8;
+  --muted: #b8b2a8;
+  --line: #31383d;
+  --accent: #84d7b5;
+  --accent-strong: #bcebd7;
+  --warn: #e4b072;
+  --shadow: 0 18px 42px rgba(0, 0, 0, 0.25);
+}
+
+/* Ajuste universal para que padding y borde no rompan los anchos definidos. */
+* {
+  box-sizing: border-box;
+}
+
+/* Habilita desplazamiento suave entre secciones al usar enlaces internos. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Estilos base del sitio: fondo alternativo, tipografia principal, color y ritmo de lectura. */
+body {
+  position: relative;
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(45, 107, 87, 0.1), transparent 28rem),
+    linear-gradient(180deg, var(--bg), var(--surface-soft));
+  color: var(--text);
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.6;
+}
+
+/* Fondo visual global: queda detras de toda la pagina, mientras el nav conserva su propio fondo. */
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 12, 13, 0.62), rgba(8, 12, 13, 0.74)),
+    linear-gradient(90deg, rgba(8, 12, 13, 0.78), rgba(8, 12, 13, 0.28) 56%, rgba(8, 12, 13, 0.56)),
+    url("assets/hero-la-casa-del-final.jpg") center / cover no-repeat;
+  content: "";
+  opacity: 1;
+  transition: background 180ms ease;
+}
+
+/* Fondo especifico para Chismes: se activa en su seccion y en sus relatos abiertos. */
+body.is-chismes-theme::before {
+  background:
+    linear-gradient(180deg, rgba(10, 9, 13, 0.58), rgba(10, 9, 13, 0.72)),
+    linear-gradient(90deg, rgba(10, 9, 13, 0.72), rgba(10, 9, 13, 0.26) 56%, rgba(10, 9, 13, 0.56)),
+    url("assets/hero-chismes.jpg") center / cover no-repeat;
+}
+
+/* Modo lectura: al abrir un relato se oculta todo lo que distrae, excepto nav y texto. */
+body.is-reader-open .intro,
+body.is-reader-open .ad-slot,
+body.is-reader-open .site-footer {
+  display: none;
+}
+
+/* Hereda la tipografia en controles y enlaces para mantener consistencia visual. */
+button,
+a {
+  font: inherit;
+}
+
+/* Quita el subrayado por defecto y mantiene el color del contexto. */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Encabezado fijo con fondo solido para que la imagen global no aparezca detras del nav. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.9rem clamp(1rem, 4vw, 4rem);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+/* Marca del sitio con isotipo y nombre alineados horizontalmente. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  font-weight: 700;
+}
+
+/* Circulo del logo de Creepy Confessions, reemplaza las iniciales por una imagen propia. */
+.brand-mark {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 72%, transparent);
+  border-radius: 50%;
+  background: #101214;
+  overflow: hidden;
+}
+
+/* Imagen del emblema: cubre el circulo sin deformarse. */
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Navegacion principal entre inicio y categorias. */
+.nav {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo compartido para controles clicables con forma de pastilla. */
+.nav a,
+.filter-button,
+.theme-toggle,
+.back-button {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+/* Apariencia de los enlaces del menu superior. */
+.nav a {
+  padding: 0.45rem 0.75rem;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.94rem;
+}
+
+/* Estado hover y activo de la navegacion. */
+.nav a:hover,
+.nav a.is-active {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+/* Boton que alterna entre modo claro y oscuro. */
+.theme-toggle {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+/* Asegura que el icono del tema use una fuente simple. */
+.theme-icon {
+  font-family: Arial, sans-serif;
+}
+
+/* Contenedor principal con ancho maximo centrado. */
+main {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+/* Seccion inicial de una columna: mensaje de portada sin card para una entrada mas limpia. */
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: end;
+  min-height: 66vh;
+  margin-top: 1.25rem;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) clamp(2rem, 5vw, 3rem);
+  color: #f7f4ec;
+}
+
+/* Titulo principal grande y compacto para la portada. */
+.intro-copy h1 {
+  max-width: 15ch;
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 5.8rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+/* Parrafo descriptivo de la portada. */
+.intro-copy p:last-child {
+  max-width: 43rem;
+  color: rgba(247, 244, 236, 0.82);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+}
+
+/* Usa fuente sans-serif en etiquetas, botones y textos funcionales. */
+.eyebrow,
+.panel-label,
+.story-category,
+.story-date,
+.ad-slot,
+.site-footer,
+.filter-button,
+.back-button {
+  font-family: Arial, sans-serif;
+}
+
+/* Etiquetas pequenas en mayusculas para categorias y encabezados secundarios. */
+.eyebrow,
+.panel-label,
+.story-category {
+  margin: 0 0 0.6rem;
+  color: var(--warn);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Espacio reservado para publicidad con transparencia leve para que respire el fondo. */
+.ad-slot {
+  display: grid;
+  min-height: 5.8rem;
+  margin: 1rem 0 2.5rem;
+  place-items: center;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Separacion vertical comun para biblioteca y lector. */
+.content-band,
+.reader {
+  padding: 2rem 0 4rem;
+}
+
+/* Da aire al relato cuando el modo lectura deja solo nav y contenido. */
+body.is-reader-open .reader {
+  min-height: calc(100vh - 5rem);
+  padding-top: clamp(1.25rem, 5vw, 3rem);
+}
+
+/* Mejora el contraste de encabezados sobre los fondos visuales globales. */
+.content-band,
+body.is-reader-open .reader {
+  color: #f7f4ec;
+}
+
+/* Encabezado de seccion con titulo y texto auxiliar alineados. */
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Titulos de biblioteca y lector. */
+.section-heading h2,
+.story-view h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+/* Contenedor de botones para filtrar relatos. */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Botones secundarios usados en filtros y volver al listado. */
+.filter-button,
+.back-button {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.9rem;
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+/* Estados interactivos de filtros y boton volver. */
+.filter-button:hover,
+.filter-button.is-active,
+.back-button:hover {
+  border-color: var(--accent);
+  background: var(--surface-soft);
+}
+
+/* Grilla responsive de tarjetas de relatos. */
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1rem;
+}
+
+/* Tarjeta individual de relato dentro de la biblioteca, con superficie legible sobre el fondo. */
+.story-card {
+  display: grid;
+  gap: 0.65rem;
+  min-height: 17rem;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 91%, transparent);
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+/* Titulo de cada tarjeta de relato. */
+.story-card h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+/* Texto descriptivo dentro de las tarjetas. */
+.story-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Boton de cada tarjeta para abrir el lector. */
+.story-card button {
+  align-self: end;
+  justify-self: start;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+}
+
+/* Contenedor del relato completo sin card: deja ver el fondo global al leer. */
+.story-view {
+  max-width: 760px;
+  margin: 1.5rem auto 0;
+  padding: clamp(0.5rem, 3vw, 1rem) 0 clamp(1rem, 4vw, 2rem);
+  color: #f7f4ec;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+}
+
+/* Fecha del relato en tarjetas y lector. */
+.story-date {
+  margin: 0.4rem 0 1.5rem;
+  color: var(--muted);
+}
+
+/* Cuerpo del relato con tamano de lectura comodo. */
+.story-body {
+  font-size: clamp(1.05rem, 2vw, 1.22rem);
+  max-width: 68ch;
+}
+
+/* Separacion entre parrafos del relato completo. */
+.story-body p {
+  margin: 0 0 1.15rem;
+}
+
+/* Pie de pagina con borde superior y texto centrado. */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Ajustes responsive para pantallas pequenas y navegacion en una segunda fila. */
+@media (max-width: 780px) {
+  /* Compacta el nav en celular para dejar mas espacio visible al contenido principal. */
+  .site-header {
+    grid-template-columns: 1fr auto;
+    gap: 0.28rem 0.45rem;
+    padding: 0.42rem 0.75rem 0.38rem;
+  }
+
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    gap: 0.38rem;
+    font-size: 0.86rem;
+    line-height: 1.1;
+  }
+
+  .brand-mark {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.66rem;
+  }
+
+  .theme-toggle {
+    grid-column: 2;
+    grid-row: 1;
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 0.15rem;
+    padding-bottom: 0;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav a {
+    padding: 0.22rem 0.45rem;
+    font-size: 0.76rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .intro {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-top: 3rem;
+  }
+
+  .intro-copy h1 {
+    max-width: 11ch;
+  }
+}
+
+@media (max-width: 420px) {
+  /* Reduce un poco mas el encabezado en telefonos angostos como los de la captura. */
+  .brand {
+    font-size: 0.8rem;
+  }
+
+  .brand-mark {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 0.6rem;
+  }
+
+  .theme-toggle {
+    width: 1.65rem;
+    height: 1.65rem;
+  }
+
+  .nav a {
+    padding: 0.18rem 0.38rem;
+    font-size: 0.72rem;
+  }
+}
+
+/* Respeta usuarios que prefieren reducir animaciones y transiciones. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

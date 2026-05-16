@@ -1,6 +1,6 @@
-# Web Lectura
+# Creepy Confessions
 
-Sitio estatico y liviano para publicar relatos en GitHub Pages.
+Sitio estatico y liviano para publicar relatos y confesiones inquietantes en GitHub Pages.
 
 ## Como agregar relatos
 
