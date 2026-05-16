@@ -42,17 +42,17 @@ Categorias disponibles:
 
 Importante: para ver la pagina en tu computador con los relatos externos, abre la web usando un servidor local o GitHub Pages. En GitHub Pages funcionara directo.
 
-## Modo prueba: Your Story
+## Your Story pausado
 
-La opcion `Your Story` del nav permite crear una historia desde la pagina con tres datos:
+La opcion `Your Story` queda guardada en el codigo, pero por ahora no es visible ni utilizable para usuarios. Se retomara cuando exista una web con backend seguro.
+
+El formulario esta pensado para recibir tres datos:
 
 - Categoria
 - Titulo
 - Historia
 
-Como el sitio es estatico, el navegador no puede escribir archivos directamente dentro del repositorio de GitHub. En modo prueba, el formulario guarda la historia en `localStorage`, la agrega al listado y la muestra automaticamente en su categoria para ese navegador.
-
-Para que una historia enviada por cualquier usuario quede publicada para todos, hay que agregar un backend o un flujo seguro que reciba la historia y cree el JSON en GitHub sin exponer credenciales privadas.
+Como el sitio es estatico, el navegador no puede enviar correos privados ni escribir archivos directamente dentro del repositorio de GitHub sin exponer credenciales o crear riesgos de seguridad. Para activar esta funcion correctamente, hay que agregar un backend o un flujo seguro que reciba la historia, la envie a revision y luego cree el JSON en GitHub.
 
 ## Idiomas
 

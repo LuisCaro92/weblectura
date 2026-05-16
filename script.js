@@ -100,6 +100,11 @@ const submissionResult = document.querySelector("#submissionResult");
 
 document.querySelector("#year").textContent = new Date().getFullYear();
 
+// Mantiene Your Story desactivado hasta tener un backend seguro para recibir relatos.
+storyForm.querySelectorAll("input, select, textarea, button").forEach((control) => {
+  control.disabled = true;
+});
+
 /**
  * Obtiene un texto traducido de la interfaz segun el idioma activo.
  */
@@ -415,7 +420,8 @@ function handleRoute() {
   } else if (parts[0] === "categoria" && (parts[1] === "ultratumba" || parts[1] === "chismes")) {
     openCategory(parts[1]);
   } else if (route === "your-story") {
-    openSubmissionForm();
+    renderStories("todos");
+    history.replaceState(null, "", "#inicio");
   } else {
     filterButtons.forEach((item) => {
       item.classList.toggle("is-active", item.dataset.filter === "todos");
@@ -518,8 +524,8 @@ sectionLinks.forEach((link) => {
     }
     if (section === "your-story") {
       event.preventDefault();
-      updateRoute("#your-story");
-      handleRoute();
+      renderStories("todos");
+      updateRoute("#inicio");
     }
     if (section === "ultratumba" || section === "chismes") {
       event.preventDefault();
