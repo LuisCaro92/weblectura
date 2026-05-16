@@ -136,6 +136,7 @@ a {
 /* Estilo compartido para controles clicables con forma de pastilla. */
 .nav a,
 .filter-button,
+.language-toggle,
 .back-button,
 .story-form button {
   border: 1px solid transparent;
@@ -157,6 +158,23 @@ a {
 .nav a.is-active {
   background: var(--surface-soft);
   color: var(--text);
+}
+
+/* Selector ES/EN para traducir solo la interfaz visible de la pagina. */
+.language-toggle {
+  min-width: 2.8rem;
+  min-height: 2.35rem;
+  padding: 0.35rem 0.65rem;
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--accent-strong);
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+}
+
+.language-toggle:hover {
+  border-color: var(--accent);
+  background: var(--surface-soft);
 }
 
 /* Contenedor principal con ancho maximo centrado. */
@@ -203,6 +221,7 @@ main {
 .ad-slot,
 .site-footer,
 .filter-button,
+.language-toggle,
 .back-button,
 .story-form {
   font-family: Arial, sans-serif;
@@ -483,6 +502,15 @@ body.is-reader-open .reader {
     font-size: 0.66rem;
   }
 
+  .language-toggle {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 2.35rem;
+    min-height: 1.8rem;
+    padding: 0.25rem 0.45rem;
+    font-size: 0.76rem;
+  }
+
   .nav {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -525,6 +553,13 @@ body.is-reader-open .reader {
     width: 1.6rem;
     height: 1.6rem;
     font-size: 0.6rem;
+  }
+
+  .language-toggle {
+    min-width: 2.15rem;
+    min-height: 1.65rem;
+    padding: 0.2rem 0.38rem;
+    font-size: 0.7rem;
   }
 
   .nav a {

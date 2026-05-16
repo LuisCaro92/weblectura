@@ -20,20 +20,23 @@
       </a>
 
       <nav class="nav" aria-label="Secciones">
-        <a href="#inicio" data-section-link="inicio">Inicio</a>
-        <a href="#relatos" data-section-link="ultratumba">Ultratumba</a>
-        <a href="#relatos" data-section-link="chismes">Chismes</a>
-        <a href="#your-story" data-section-link="your-story">Your Story</a>
+        <a href="#inicio" data-section-link="inicio" data-i18n="navHome">Inicio</a>
+        <a href="#relatos" data-section-link="ultratumba" data-i18n="navUltratumba">Ultratumba</a>
+        <a href="#relatos" data-section-link="chismes" data-i18n="navChismes">Chismes</a>
+        <a href="#your-story" data-section-link="your-story" data-i18n="navYourStory">Your Story</a>
       </nav>
+
+      <!-- Selector de idioma para traducir textos propios de la interfaz. -->
+      <button class="language-toggle" type="button" id="languageToggle" aria-label="Change language">EN</button>
     </header>
 
     <main>
       <!-- Portada: presenta el sitio con un mensaje directo y sin card para mantener foco visual. -->
       <section class="intro" id="inicio">
         <div class="intro-copy">
-          <p class="eyebrow">SHORT READS. DARK SECRETS.</p>
-          <h1>Creepy stories, wild rumors, and secrets you shouldn’t read alone.</h1>
-          <p>
+          <p class="eyebrow" data-i18n="heroEyebrow">SHORT READS. DARK SECRETS.</p>
+          <h1 data-i18n="heroTitle">Creepy stories, wild rumors, and secrets you shouldn’t read alone.</h1>
+          <p data-i18n="heroText">
             Un espacio sencillo para descubrir confesiones, rumores y relatos inquietantes,
             organizado por secciones y pensado para cargar rapido en cualquier dispositivo.
           </p>
@@ -42,20 +45,20 @@
 
       <!-- Bloque reservado para integrar anuncios de Google Ads u otra publicidad. -->
       <aside class="ad-slot" aria-label="Espacio publicitario">
-        <span>Espacio para Google Ads</span>
+        <span data-i18n="adSlot">Espacio para Google Ads</span>
       </aside>
 
       <!-- Biblioteca de relatos: contiene titulo, filtros y la grilla generada por JavaScript. -->
       <section class="content-band" id="relatos">
         <div class="section-heading">
-          <p class="eyebrow">Biblioteca</p>
-          <h2>Ultimos relatos</h2>
+          <p class="eyebrow" data-i18n="libraryEyebrow">Biblioteca</p>
+          <h2 data-i18n="libraryTitle">Ultimos relatos</h2>
         </div>
 
         <div class="filters" aria-label="Filtrar relatos">
-          <button class="filter-button is-active" type="button" data-filter="todos">Todos</button>
-          <button class="filter-button" type="button" data-filter="ultratumba">Ultratumba</button>
-          <button class="filter-button" type="button" data-filter="chismes">Chismes</button>
+          <button class="filter-button is-active" type="button" data-filter="todos" data-i18n="filterAll">Todos</button>
+          <button class="filter-button" type="button" data-filter="ultratumba" data-i18n="filterUltratumba">Ultratumba</button>
+          <button class="filter-button" type="button" data-filter="chismes" data-i18n="filterChismes">Chismes</button>
         </div>
 
         <div class="story-grid" id="storyList"></div>
@@ -64,30 +67,30 @@
       <!-- Formulario de prueba: genera un archivo JSON descargable para nuevas historias. -->
       <section class="submission" id="your-story" hidden>
         <div class="section-heading">
-          <p class="eyebrow">Submit a confession</p>
-          <h2>Your Story</h2>
+          <p class="eyebrow" data-i18n="submitEyebrow">Submit a confession</p>
+          <h2 data-i18n="submitTitle">Your Story</h2>
         </div>
 
         <form class="story-form" id="storyForm">
           <label>
-            Categoria
+            <span data-i18n="formCategory">Categoria</span>
             <select id="storyCategory" name="categoria" required>
-              <option value="ultratumba">Ultratumba</option>
-              <option value="chismes">Chisme</option>
+              <option value="ultratumba" data-i18n="optionUltratumba">Ultratumba</option>
+              <option value="chismes" data-i18n="optionChismes">Chisme</option>
             </select>
           </label>
 
           <label>
-            Titulo
-            <input id="storyTitle" name="titulo" type="text" required maxlength="120" placeholder="Escribe el titulo">
+            <span data-i18n="formTitle">Titulo</span>
+            <input id="storyTitle" name="titulo" type="text" required maxlength="120" placeholder="Escribe el titulo" data-i18n-placeholder="titlePlaceholder">
           </label>
 
           <label>
-            Historia
-            <textarea id="storyContent" name="historia" required rows="12" placeholder="Pega o escribe la historia completa"></textarea>
+            <span data-i18n="formStory">Historia</span>
+            <textarea id="storyContent" name="historia" required rows="12" placeholder="Pega o escribe la historia completa" data-i18n-placeholder="storyPlaceholder"></textarea>
           </label>
 
-          <button type="submit">Create History</button>
+          <button type="submit" data-i18n="createHistory">Create History</button>
         </form>
 
         <div class="submission-result" id="submissionResult" hidden></div>
@@ -95,7 +98,7 @@
 
       <!-- Lector individual: se oculta al inicio y se rellena al seleccionar un relato. -->
       <section class="reader" id="lector" hidden>
-        <button class="back-button" type="button" id="backToList">Volver a relatos</button>
+        <button class="back-button" type="button" id="backToList" data-i18n="backToStories">Volver a relatos</button>
         <article class="story-view">
           <p class="story-category" id="readerCategory"></p>
           <h2 id="readerTitle"></h2>
@@ -107,7 +110,7 @@
 
     <!-- Pie de pagina con ano dinamico actualizado desde JavaScript. -->
     <footer class="site-footer">
-      <p>Â© <span id="year"></span> Creepy Confessions. Todos los derechos reservados.</p>
+      <p>&copy; <span id="year"></span> Creepy Confessions. <span data-i18n="footerRights">Todos los derechos reservados.</span></p>
     </footer>
 
     <!-- Script principal: carga relatos, maneja filtros, lector y tema visual. -->

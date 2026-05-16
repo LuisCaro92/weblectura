@@ -1,11 +1,81 @@
 let relatos = [];
 let activeFilter = "todos";
+let currentStoryId = null;
+let currentLanguage = localStorage.getItem("language") || "es";
 
-// Traduce las categorias internas de los JSON a etiquetas legibles para la interfaz.
-const categoryLabels = {
-  ultratumba: "Ultratumba",
-  chismes: "Chismes"
+// Diccionario base para traducir solo la interfaz; los relatos se traduciran en una etapa futura.
+const translations = {
+  es: {
+    navHome: "Inicio",
+    navUltratumba: "Ultratumba",
+    navChismes: "Chismes",
+    navYourStory: "Tu historia",
+    heroEyebrow: "LECTURAS CORTAS. SECRETOS OSCUROS.",
+    heroTitle: "Historias creepy, rumores salvajes y secretos que no deberias leer a solas.",
+    heroText: "Un espacio sencillo para descubrir confesiones, rumores y relatos inquietantes, organizado por secciones y pensado para cargar rapido en cualquier dispositivo.",
+    adSlot: "Espacio para Google Ads",
+    libraryEyebrow: "Biblioteca",
+    libraryTitle: "Ultimos relatos",
+    filterAll: "Todos",
+    filterUltratumba: "Ultratumba",
+    filterChismes: "Chismes",
+    submitEyebrow: "Envia una confesion",
+    submitTitle: "Tu historia",
+    formCategory: "Categoria",
+    formTitle: "Titulo",
+    formStory: "Historia",
+    optionUltratumba: "Ultratumba",
+    optionChismes: "Chisme",
+    titlePlaceholder: "Escribe el titulo",
+    storyPlaceholder: "Pega o escribe la historia completa",
+    createHistory: "Crear historia",
+    backToStories: "Volver a relatos",
+    footerRights: "Todos los derechos reservados.",
+    readStory: "Leer relato",
+    loadError: "No se pudieron cargar los relatos. Revisa que los archivos JSON existan y que la pagina se abra desde un servidor o GitHub Pages.",
+    emptyStory: "La historia necesita texto antes de crear el JSON.",
+    jsonCreated: "JSON creado:",
+    suggestedPath: "Ruta sugerida:",
+    publishHint: "Despues agrega esta ruta en relatos/relatos.json para publicarlo en la biblioteca.",
+    langButton: "EN"
+  },
+  en: {
+    navHome: "Home",
+    navUltratumba: "Afterlife",
+    navChismes: "Gossip",
+    navYourStory: "Your Story",
+    heroEyebrow: "SHORT READS. DARK SECRETS.",
+    heroTitle: "Creepy stories, wild rumors, and secrets you shouldn’t read alone.",
+    heroText: "A simple place to discover confessions, rumors, and unsettling stories, organized by sections and built to load fast on any device.",
+    adSlot: "Google Ads space",
+    libraryEyebrow: "Library",
+    libraryTitle: "Latest stories",
+    filterAll: "All",
+    filterUltratumba: "Afterlife",
+    filterChismes: "Gossip",
+    submitEyebrow: "Submit a confession",
+    submitTitle: "Your Story",
+    formCategory: "Category",
+    formTitle: "Title",
+    formStory: "Story",
+    optionUltratumba: "Afterlife",
+    optionChismes: "Gossip",
+    titlePlaceholder: "Write the title",
+    storyPlaceholder: "Paste or write the full story",
+    createHistory: "Create History",
+    backToStories: "Back to stories",
+    footerRights: "All rights reserved.",
+    readStory: "Read story",
+    loadError: "Stories could not be loaded. Check that the JSON files exist and that the page is opened from a server or GitHub Pages.",
+    emptyStory: "The story needs text before creating the JSON.",
+    jsonCreated: "JSON created:",
+    suggestedPath: "Suggested path:",
+    publishHint: "Then add this path to relatos/relatos.json to publish it in the library.",
+    langButton: "ES"
+  }
 };
+
+if (!translations[currentLanguage]) currentLanguage = "es";
 
 // Guarda una referencia al body para activar estados visuales de lectura, chismes y formulario.
 const pageBody = document.body;
@@ -21,6 +91,7 @@ const contentBand = document.querySelector(".content-band");
 const submission = document.querySelector("#your-story");
 const filterButtons = document.querySelectorAll(".filter-button");
 const sectionLinks = document.querySelectorAll("[data-section-link]");
+const languageToggle = document.querySelector("#languageToggle");
 const storyForm = document.querySelector("#storyForm");
 const storyCategory = document.querySelector("#storyCategory");
 const storyTitle = document.querySelector("#storyTitle");
@@ -30,10 +101,49 @@ const submissionResult = document.querySelector("#submissionResult");
 document.querySelector("#year").textContent = new Date().getFullYear();
 
 /**
+ * Obtiene un texto traducido de la interfaz segun el idioma activo.
+ */
+function t(key) {
+  return translations[currentLanguage][key] || translations.es[key] || key;
+}
+
+/**
+ * Traduce las categorias internas de los JSON a etiquetas legibles por idioma.
+ */
+function getCategoryLabel(category) {
+  if (category === "chismes") return t("filterChismes");
+  if (category === "ultratumba") return t("filterUltratumba");
+  return category;
+}
+
+/**
+ * Aplica el idioma elegido a los textos estaticos de la interfaz y refresca vistas dinamicas.
+ */
+function applyLanguage() {
+  document.documentElement.lang = currentLanguage;
+  localStorage.setItem("language", currentLanguage);
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    element.placeholder = t(element.dataset.i18nPlaceholder);
+  });
+
+  languageToggle.textContent = t("langButton");
+  languageToggle.setAttribute("aria-label", currentLanguage === "es" ? "Switch to English" : "Cambiar a español");
+
+  if (!contentBand.hidden) renderStories(activeFilter);
+  if (!reader.hidden && currentStoryId) refreshReaderMetadata(currentStoryId);
+}
+
+/**
  * Convierte una fecha en formato YYYY-MM-DD a una fecha larga en espanol de Chile.
  */
 function formatDate(date) {
-  return new Intl.DateTimeFormat("es-CL", {
+  const locale = currentLanguage === "es" ? "es-CL" : "en-US";
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric"
@@ -103,7 +213,7 @@ async function loadStories() {
   } catch (error) {
     storyList.innerHTML = `
       <p class="load-error">
-        No se pudieron cargar los relatos. Revisa que los archivos JSON existan y que la pagina se abra desde un servidor o GitHub Pages.
+        ${t("loadError")}
         ${error.message}
       </p>
     `;
@@ -126,14 +236,25 @@ function renderStories(filter = "todos") {
   storyList.innerHTML = visibleStories.map((relato) => `
     <article class="story-card">
       <div>
-        <p class="story-category">${categoryLabels[relato.categoria]}</p>
+        <p class="story-category">${getCategoryLabel(relato.categoria)}</p>
         <h3>${relato.titulo}</h3>
       </div>
       <p>${getExcerpt(relato.resumen)}</p>
       <p class="story-date">${formatDate(relato.fecha)}</p>
-      <button type="button" data-story-id="${relato.id}">Leer relato</button>
+      <button type="button" data-story-id="${relato.id}">${t("readStory")}</button>
     </article>
   `).join("");
+}
+
+/**
+ * Refresca los metadatos traducibles del lector sin cambiar el texto del relato.
+ */
+function refreshReaderMetadata(storyId) {
+  const story = relatos.find((relato) => relato.id === storyId);
+  if (!story) return;
+
+  readerCategory.textContent = getCategoryLabel(story.categoria);
+  readerDate.textContent = formatDate(story.fecha);
 }
 
 /**
@@ -143,7 +264,8 @@ function openStory(storyId) {
   const story = relatos.find((relato) => relato.id === storyId);
   if (!story) return;
 
-  readerCategory.textContent = categoryLabels[story.categoria];
+  currentStoryId = story.id;
+  readerCategory.textContent = getCategoryLabel(story.categoria);
   readerTitle.textContent = story.titulo;
   readerDate.textContent = formatDate(story.fecha);
   readerBody.innerHTML = story.contenido.map((paragraph) => `<p>${paragraph}</p>`).join("");
@@ -159,6 +281,7 @@ function openStory(storyId) {
  * Cierra el lector, vuelve a mostrar la lista de relatos y desplaza la pagina a la biblioteca.
  */
 function closeReader() {
+  currentStoryId = null;
   reader.hidden = true;
   contentBand.hidden = false;
   submission.hidden = true;
@@ -195,7 +318,7 @@ function downloadStoryJson(event) {
 
   if (!contenido.length) {
     submissionResult.hidden = false;
-    submissionResult.innerHTML = "<p>La historia necesita texto antes de crear el JSON.</p>";
+    submissionResult.innerHTML = `<p>${t("emptyStory")}</p>`;
     return;
   }
 
@@ -217,9 +340,9 @@ function downloadStoryJson(event) {
 
   submissionResult.hidden = false;
   submissionResult.innerHTML = `
-    <p><strong>JSON creado:</strong> ${fileName}</p>
-    <p>Ruta sugerida: <code>${suggestedPath}</code></p>
-    <p>Despues agrega esta ruta en <code>relatos/relatos.json</code> para publicarlo en la biblioteca.</p>
+    <p><strong>${t("jsonCreated")}</strong> ${fileName}</p>
+    <p>${t("suggestedPath")} <code>${suggestedPath}</code></p>
+    <p>${t("publishHint")}</p>
   `;
 }
 
@@ -234,6 +357,12 @@ document.querySelector("#backToList").addEventListener("click", closeReader);
 
 // Conecta el formulario de prueba con la descarga automatica del JSON.
 storyForm.addEventListener("submit", downloadStoryJson);
+
+// Cambia entre espanol e ingles para los textos propios de la interfaz.
+languageToggle.addEventListener("click", () => {
+  currentLanguage = currentLanguage === "es" ? "en" : "es";
+  applyLanguage();
+});
 
 // Activa los filtros de categoria y vuelve a pintar la lista segun el filtro elegido.
 filterButtons.forEach((button) => {
@@ -272,5 +401,6 @@ sectionLinks.forEach((link) => {
   });
 });
 
-// Inicia la aplicacion cargando los relatos desde los archivos JSON.
+// Inicia la interfaz con el idioma guardado y luego carga los relatos desde los archivos JSON.
+applyLanguage();
 loadStories();

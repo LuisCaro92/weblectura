@@ -52,6 +52,10 @@ La opcion `Your Story` del nav permite crear una historia desde la pagina con tr
 
 Como el sitio es estatico, el navegador no puede escribir archivos directamente dentro del repositorio. Por eso el formulario genera y descarga un archivo `.json` listo para subir a la carpeta sugerida, y despues hay que agregar esa ruta en `relatos/relatos.json`.
 
+## Idiomas
+
+El boton `ES / EN` del nav cambia el idioma de los textos propios de la interfaz: navegacion, portada, filtros, formulario, botones y mensajes. Los relatos se mantienen en el idioma original por ahora; la traduccion del contenido de cada relato queda preparada como una mejora futura.
+
 ## Google Ads
 
 Cuando Google AdSense entregue el codigo, reemplaza el bloque `.ad-slot` en `index.html` por el bloque oficial de anuncio. Tambien puedes pegar el script de AdSense en el `<head>`.
