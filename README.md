@@ -50,7 +50,9 @@ La opcion `Your Story` del nav permite crear una historia desde la pagina con tr
 - Titulo
 - Historia
 
-Como el sitio es estatico, el navegador no puede escribir archivos directamente dentro del repositorio. Por eso el formulario genera y descarga un archivo `.json` listo para subir a la carpeta sugerida, y despues hay que agregar esa ruta en `relatos/relatos.json`.
+Como el sitio es estatico, el navegador no puede escribir archivos directamente dentro del repositorio de GitHub. En modo prueba, el formulario guarda la historia en `localStorage`, la agrega al listado y la muestra automaticamente en su categoria para ese navegador.
+
+Para que una historia enviada por cualquier usuario quede publicada para todos, hay que agregar un backend o un flujo seguro que reciba la historia y cree el JSON en GitHub sin exponer credenciales privadas.
 
 ## Idiomas
 

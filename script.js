@@ -3,6 +3,7 @@ let activeFilter = "todos";
 let currentStoryId = null;
 let currentLanguage = localStorage.getItem("language") || "es";
 let isRouting = false;
+const userStoriesKey = "creepy-confessions-user-stories";
 
 // Diccionario base para traducir solo la interfaz; los relatos se traduciran en una etapa futura.
 const translations = {
@@ -35,9 +36,8 @@ const translations = {
     readStory: "Leer relato",
     loadError: "No se pudieron cargar los relatos. Revisa que los archivos JSON existan y que la pagina se abra desde un servidor o GitHub Pages.",
     emptyStory: "La historia necesita texto antes de crear el JSON.",
-    jsonCreated: "JSON creado:",
-    suggestedPath: "Ruta sugerida:",
-    publishHint: "Despues agrega esta ruta en relatos/relatos.json para publicarlo en la biblioteca.",
+    storySaved: "Historia guardada en este navegador.",
+    storySavedHint: "Ya aparece automaticamente en su seccion. Para publicarla para todos los usuarios, hace falta conectar un backend o un flujo seguro hacia GitHub.",
     langButton: "EN"
   },
   en: {
@@ -69,9 +69,8 @@ const translations = {
     readStory: "Read story",
     loadError: "Stories could not be loaded. Check that the JSON files exist and that the page is opened from a server or GitHub Pages.",
     emptyStory: "The story needs text before creating the JSON.",
-    jsonCreated: "JSON created:",
-    suggestedPath: "Suggested path:",
-    publishHint: "Then add this path to relatos/relatos.json to publish it in the library.",
+    storySaved: "Story saved in this browser.",
+    storySavedHint: "It now appears automatically in its section. To publish it for every user, the site needs a backend or a secure GitHub workflow.",
     langButton: "ES"
   }
 };
@@ -182,6 +181,40 @@ function formatStoryContent(text) {
 }
 
 /**
+ * Lee las historias creadas desde el formulario y guardadas en este navegador.
+ */
+function loadUserStories() {
+  try {
+    return JSON.parse(localStorage.getItem(userStoriesKey)) || [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Guarda una historia creada por el usuario en este navegador.
+ */
+function saveUserStory(story) {
+  const storedStories = loadUserStories().filter((item) => item.id !== story.id);
+  localStorage.setItem(userStoriesKey, JSON.stringify([...storedStories, story]));
+}
+
+/**
+ * Evita id duplicados cuando el usuario crea varias historias con titulos parecidos.
+ */
+function getUniqueStoryId(baseId) {
+  let nextId = baseId;
+  let counter = 2;
+
+  while (relatos.some((relato) => relato.id === nextId)) {
+    nextId = `${baseId}-${counter}`;
+    counter += 1;
+  }
+
+  return nextId;
+}
+
+/**
  * Genera la ruta hash de una categoria para compartir secciones sin servidor.
  */
 function getCategoryRoute(category) {
@@ -254,7 +287,7 @@ async function loadStories() {
       return storyResponse.json();
     });
 
-    relatos = await Promise.all(storyRequests);
+    relatos = [...await Promise.all(storyRequests), ...loadUserStories()];
     relatos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
     handleRoute();
   } catch (error) {
@@ -353,7 +386,7 @@ function closeReader() {
 }
 
 /**
- * Abre el formulario de prueba para crear una historia en formato JSON descargable.
+ * Abre el formulario de prueba para crear una historia visible en este navegador.
  */
 function openSubmissionForm() {
   reader.hidden = true;
@@ -396,19 +429,16 @@ function handleRoute() {
 }
 
 /**
- * Genera y descarga un archivo JSON con categoria, titulo e historia.
- * En modo estatico no puede escribir en el repo, por eso entrega el archivo listo para subir.
+ * Guarda una historia creada desde el formulario y la muestra al instante en su seccion.
+ * En GitHub Pages queda guardada en el navegador; publicar para todos requiere backend.
  */
-function downloadStoryJson(event) {
+function saveSubmittedStory(event) {
   event.preventDefault();
 
   const categoria = storyCategory.value;
   const titulo = storyTitle.value.trim();
   const contenido = formatStoryContent(storyContent.value);
-  const id = slugify(titulo);
-  const folder = categoria === "chismes" ? "chismes" : "ultratumba";
-  const fileName = `${id}.json`;
-  const suggestedPath = `relatos/${folder}/${fileName}`;
+  const id = getUniqueStoryId(slugify(titulo));
 
   if (!contenido.length) {
     submissionResult.hidden = false;
@@ -422,21 +452,20 @@ function downloadStoryJson(event) {
     titulo,
     fecha: new Date().toISOString().slice(0, 10),
     resumen: getExcerpt(contenido[0] || titulo),
-    contenido
+    contenido,
+    localOnly: true
   };
 
-  const blob = new Blob([`${JSON.stringify(story, null, 2)}\n`], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = fileName;
-  link.click();
-  URL.revokeObjectURL(link.href);
+  relatos = [...relatos.filter((relato) => relato.id !== story.id), story];
+  relatos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  saveUserStory(story);
+  storyForm.reset();
+  renderStories(categoria);
 
   submissionResult.hidden = false;
   submissionResult.innerHTML = `
-    <p><strong>${t("jsonCreated")}</strong> ${fileName}</p>
-    <p>${t("suggestedPath")} <code>${suggestedPath}</code></p>
-    <p>${t("publishHint")}</p>
+    <p><strong>${t("storySaved")}</strong></p>
+    <p>${t("storySavedHint")}</p>
   `;
 }
 
@@ -455,8 +484,8 @@ readerBody.addEventListener("click", (event) => {
 // Conecta el boton de volver con la funcion que cierra el lector.
 document.querySelector("#backToList").addEventListener("click", closeReader);
 
-// Conecta el formulario de prueba con la descarga automatica del JSON.
-storyForm.addEventListener("submit", downloadStoryJson);
+// Conecta el formulario de prueba con el guardado automatico en este navegador.
+storyForm.addEventListener("submit", saveSubmittedStory);
 
 // Cambia entre espanol e ingles para los textos propios de la interfaz.
 languageToggle.addEventListener("click", () => {
