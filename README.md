@@ -42,6 +42,16 @@ Categorias disponibles:
 
 Importante: para ver la pagina en tu computador con los relatos externos, abre la web usando un servidor local o GitHub Pages. En GitHub Pages funcionara directo.
 
+## Modo prueba: Your Story
+
+La opcion `Your Story` del nav permite crear una historia desde la pagina con tres datos:
+
+- Categoria
+- Titulo
+- Historia
+
+Como el sitio es estatico, el navegador no puede escribir archivos directamente dentro del repositorio. Por eso el formulario genera y descarga un archivo `.json` listo para subir a la carpeta sugerida, y despues hay que agregar esa ruta en `relatos/relatos.json`.
+
 ## Google Ads
 
 Cuando Google AdSense entregue el codigo, reemplaza el bloque `.ad-slot` en `index.html` por el bloque oficial de anuncio. Tambien puedes pegar el script de AdSense en el `<head>`.

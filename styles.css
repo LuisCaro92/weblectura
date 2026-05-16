@@ -79,6 +79,12 @@ body.is-reader-open .site-footer {
   display: none;
 }
 
+/* Modo formulario: oculta portada y anuncios para enfocar la carga de una nueva historia. */
+body.is-submission-open .intro,
+body.is-submission-open .ad-slot {
+  display: none;
+}
+
 /* Hereda la tipografia en controles y enlaces para mantener consistencia visual. */
 button,
 a {
@@ -146,7 +152,8 @@ a {
 .nav a,
 .filter-button,
 .theme-toggle,
-.back-button {
+.back-button,
+.story-form button {
   border: 1px solid transparent;
   border-radius: 999px;
   cursor: pointer;
@@ -228,7 +235,8 @@ main {
 .ad-slot,
 .site-footer,
 .filter-button,
-.back-button {
+.back-button,
+.story-form {
   font-family: Arial, sans-serif;
 }
 
@@ -259,7 +267,8 @@ main {
 
 /* Separacion vertical comun para biblioteca y lector. */
 .content-band,
-.reader {
+.reader,
+.submission {
   padding: 2rem 0 4rem;
 }
 
@@ -267,6 +276,12 @@ main {
 body.is-reader-open .reader {
   min-height: calc(100vh - 5rem);
   padding-top: clamp(1.25rem, 5vw, 3rem);
+}
+
+/* Formulario de prueba para generar archivos JSON de nuevas historias. */
+.submission {
+  min-height: calc(100vh - 5rem);
+  color: #f7f4ec;
 }
 
 /* Mejora el contraste de encabezados sobre los fondos visuales globales. */
@@ -298,6 +313,81 @@ body.is-reader-open .reader {
   flex-wrap: wrap;
   gap: 0.55rem;
   margin-bottom: 1.25rem;
+}
+
+/* Superficie liviana del formulario para mantener legibilidad sobre el fondo. */
+.story-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+  padding: clamp(1rem, 4vw, 1.4rem);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--text);
+  backdrop-filter: blur(12px);
+}
+
+/* Campos permitidos para crear una historia: categoria, titulo e historia. */
+.story-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.story-form input,
+.story-form select,
+.story-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface);
+  color: var(--text);
+  font: 1rem/1.5 Georgia, "Times New Roman", serif;
+}
+
+.story-form textarea {
+  min-height: 16rem;
+  resize: vertical;
+}
+
+.story-form button {
+  justify-self: start;
+  min-height: 2.45rem;
+  padding: 0.55rem 1rem;
+  border-color: var(--accent);
+  background: var(--accent-strong);
+  color: var(--surface);
+  font-weight: 700;
+}
+
+/* Resultado de prueba con la ruta sugerida para enlazar el JSON creado. */
+.submission-result {
+  max-width: 760px;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.submission-result p {
+  margin: 0 0 0.5rem;
+}
+
+.submission-result p:last-child {
+  margin-bottom: 0;
+}
+
+.submission-result code {
+  color: var(--accent-strong);
+  font-weight: 700;
 }
 
 /* Botones secundarios usados en filtros y volver al listado. */

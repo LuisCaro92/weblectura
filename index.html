@@ -23,6 +23,7 @@
         <a href="#inicio" data-section-link="inicio">Inicio</a>
         <a href="#relatos" data-section-link="ultratumba">Ultratumba</a>
         <a href="#relatos" data-section-link="chismes">Chismes</a>
+        <a href="#your-story" data-section-link="your-story">Your Story</a>
       </nav>
 
       <button class="theme-toggle" type="button" id="themeToggle" aria-label="Cambiar tema">
@@ -62,6 +63,38 @@
         </div>
 
         <div class="story-grid" id="storyList"></div>
+      </section>
+
+      <!-- Formulario de prueba: genera un archivo JSON descargable para nuevas historias. -->
+      <section class="submission" id="your-story" hidden>
+        <div class="section-heading">
+          <p class="eyebrow">Submit a confession</p>
+          <h2>Your Story</h2>
+        </div>
+
+        <form class="story-form" id="storyForm">
+          <label>
+            Categoria
+            <select id="storyCategory" name="categoria" required>
+              <option value="ultratumba">Ultratumba</option>
+              <option value="chismes">Chisme</option>
+            </select>
+          </label>
+
+          <label>
+            Titulo
+            <input id="storyTitle" name="titulo" type="text" required maxlength="120" placeholder="Escribe el titulo">
+          </label>
+
+          <label>
+            Historia
+            <textarea id="storyContent" name="historia" required rows="12" placeholder="Pega o escribe la historia completa"></textarea>
+          </label>
+
+          <button type="submit">Crear JSON</button>
+        </form>
+
+        <div class="submission-result" id="submissionResult" hidden></div>
       </section>
 
       <!-- Lector individual: se oculta al inicio y se rellena al seleccionar un relato. -->

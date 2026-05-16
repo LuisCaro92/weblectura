@@ -22,8 +22,14 @@ const readerTitle = document.querySelector("#readerTitle");
 const readerDate = document.querySelector("#readerDate");
 const readerBody = document.querySelector("#readerBody");
 const contentBand = document.querySelector(".content-band");
+const submission = document.querySelector("#your-story");
 const filterButtons = document.querySelectorAll(".filter-button");
 const sectionLinks = document.querySelectorAll("[data-section-link]");
+const storyForm = document.querySelector("#storyForm");
+const storyCategory = document.querySelector("#storyCategory");
+const storyTitle = document.querySelector("#storyTitle");
+const storyContent = document.querySelector("#storyContent");
+const submissionResult = document.querySelector("#submissionResult");
 
 document.querySelector("#year").textContent = new Date().getFullYear();
 
@@ -53,6 +59,29 @@ function getExcerpt(text) {
 }
 
 /**
+ * Crea un id seguro para archivos y URLs a partir del titulo ingresado.
+ */
+function slugify(text) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "historia-sin-titulo";
+}
+
+/**
+ * Divide la historia en parrafos limpios para guardarla en el formato JSON del sitio.
+ */
+function formatStoryContent(text) {
+  return text
+    .split(/\n{2,}|\r?\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+/**
  * Controla el fondo visual global segun la categoria activa.
  * Chismes usa una imagen distinta tanto en listado como en modo lectura.
  */
@@ -60,6 +89,7 @@ function setPageBackground({ filter = activeFilter, readerOpen = false } = {}) {
   pageBody.classList.toggle("is-chismes-list", filter === "chismes");
   pageBody.classList.toggle("is-chismes-theme", filter === "chismes");
   pageBody.classList.toggle("is-reader-open", readerOpen);
+  pageBody.classList.remove("is-submission-open");
 }
 
 /**
@@ -97,6 +127,8 @@ async function loadStories() {
 function renderStories(filter = "todos") {
   activeFilter = filter;
   setPageBackground({ filter: activeFilter, readerOpen: false });
+  submission.hidden = true;
+  contentBand.hidden = false;
 
   const visibleStories = filter === "todos"
     ? relatos
@@ -128,6 +160,7 @@ function openStory(storyId) {
   readerBody.innerHTML = story.contenido.map((paragraph) => `<p>${paragraph}</p>`).join("");
 
   contentBand.hidden = true;
+  submission.hidden = true;
   reader.hidden = false;
   setPageBackground({ filter: story.categoria, readerOpen: true });
   reader.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -139,8 +172,66 @@ function openStory(storyId) {
 function closeReader() {
   reader.hidden = true;
   contentBand.hidden = false;
+  submission.hidden = true;
   setPageBackground({ filter: activeFilter, readerOpen: false });
   document.querySelector("#relatos").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/**
+ * Abre el formulario de prueba para crear una historia en formato JSON descargable.
+ */
+function openSubmissionForm() {
+  reader.hidden = true;
+  contentBand.hidden = true;
+  submission.hidden = false;
+  setPageBackground({ filter: "chismes", readerOpen: false });
+  pageBody.classList.add("is-submission-open");
+  submission.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/**
+ * Genera y descarga un archivo JSON con categoria, titulo e historia.
+ * En modo estatico no puede escribir en el repo, por eso entrega el archivo listo para subir.
+ */
+function downloadStoryJson(event) {
+  event.preventDefault();
+
+  const categoria = storyCategory.value;
+  const titulo = storyTitle.value.trim();
+  const contenido = formatStoryContent(storyContent.value);
+  const id = slugify(titulo);
+  const folder = categoria === "chismes" ? "chismes" : "ultratumba";
+  const fileName = `${id}.json`;
+  const suggestedPath = `relatos/${folder}/${fileName}`;
+
+  if (!contenido.length) {
+    submissionResult.hidden = false;
+    submissionResult.innerHTML = "<p>La historia necesita texto antes de crear el JSON.</p>";
+    return;
+  }
+
+  const story = {
+    id,
+    categoria,
+    titulo,
+    fecha: new Date().toISOString().slice(0, 10),
+    resumen: getExcerpt(contenido[0] || titulo),
+    contenido
+  };
+
+  const blob = new Blob([`${JSON.stringify(story, null, 2)}\n`], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(link.href);
+
+  submissionResult.hidden = false;
+  submissionResult.innerHTML = `
+    <p><strong>JSON creado:</strong> ${fileName}</p>
+    <p>Ruta sugerida: <code>${suggestedPath}</code></p>
+    <p>Despues agrega esta ruta en <code>relatos/relatos.json</code> para publicarlo en la biblioteca.</p>
+  `;
 }
 
 // Detecta clicks en los botones de cada tarjeta y abre el relato correspondiente.
@@ -151,6 +242,9 @@ storyList.addEventListener("click", (event) => {
 
 // Conecta el boton de volver con la funcion que cierra el lector.
 document.querySelector("#backToList").addEventListener("click", closeReader);
+
+// Conecta el formulario de prueba con la descarga automatica del JSON.
+storyForm.addEventListener("submit", downloadStoryJson);
 
 // Activa los filtros de categoria y vuelve a pintar la lista segun el filtro elegido.
 filterButtons.forEach((button) => {
@@ -169,7 +263,14 @@ sectionLinks.forEach((link) => {
     link.classList.add("is-active");
     const section = link.dataset.sectionLink;
     if (section === "inicio") {
+      reader.hidden = true;
+      contentBand.hidden = false;
+      submission.hidden = true;
       setPageBackground({ filter: "todos", readerOpen: false });
+    }
+    if (section === "your-story") {
+      event.preventDefault();
+      openSubmissionForm();
     }
     if (section === "ultratumba" || section === "chismes") {
       event.preventDefault();
