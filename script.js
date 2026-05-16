@@ -1,7 +1,7 @@
 let relatos = [];
 let activeFilter = "todos";
 let currentStoryId = null;
-let currentLanguage = localStorage.getItem("language") || "es";
+let currentLanguage = "en";
 let isRouting = false;
 const userStoriesKey = "creepy-confessions-user-stories";
 
@@ -73,7 +73,7 @@ const translations = {
   }
 };
 
-if (!translations[currentLanguage]) currentLanguage = "es";
+if (!translations[currentLanguage]) currentLanguage = "en";
 
 // Guarda una referencia al body para activar estados visuales de lectura, chismes y formulario.
 const pageBody = document.body;
@@ -124,7 +124,6 @@ function getCategoryLabel(category) {
  */
 function applyLanguage() {
   document.documentElement.lang = currentLanguage;
-  localStorage.setItem("language", currentLanguage);
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     element.textContent = t(element.dataset.i18n);
