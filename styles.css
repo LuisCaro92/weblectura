@@ -469,6 +469,13 @@ body.is-reader-open .reader {
   margin: 0 0 1.15rem;
 }
 
+/* Resalta el parrafo exacto cuando una ruta externa apunta a una parte del relato. */
+.story-paragraph.is-linked {
+  border-left: 3px solid var(--warn);
+  padding-left: 0.8rem;
+  background: linear-gradient(90deg, rgba(228, 176, 114, 0.18), transparent);
+}
+
 /* Pie de pagina con borde superior y texto centrado. */
 .site-footer {
   position: relative;

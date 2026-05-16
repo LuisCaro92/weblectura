@@ -2,6 +2,7 @@ let relatos = [];
 let activeFilter = "todos";
 let currentStoryId = null;
 let currentLanguage = localStorage.getItem("language") || "es";
+let isRouting = false;
 
 // Diccionario base para traducir solo la interfaz; los relatos se traduciran en una etapa futura.
 const translations = {
@@ -181,6 +182,52 @@ function formatStoryContent(text) {
 }
 
 /**
+ * Genera la ruta hash de una categoria para compartir secciones sin servidor.
+ */
+function getCategoryRoute(category) {
+  if (category === "ultratumba" || category === "chismes") return `#categoria/${category}`;
+  return "#relatos";
+}
+
+/**
+ * Genera la ruta hash de un relato y, opcionalmente, de un parrafo especifico.
+ */
+function getStoryRoute(storyId, paragraphNumber) {
+  return paragraphNumber ? `#relato/${storyId}/p/${paragraphNumber}` : `#relato/${storyId}`;
+}
+
+/**
+ * Cambia la ruta sin disparar un ciclo duplicado cuando la navegacion ya viene del router.
+ */
+function updateRoute(route) {
+  if (isRouting || window.location.hash === route) return;
+  window.location.hash = route;
+}
+
+/**
+ * Hace scroll a un parrafo concreto del relato abierto cuando la ruta lo solicita.
+ */
+function scrollToStoryParagraph(paragraphNumber) {
+  document.querySelectorAll(".story-paragraph.is-linked").forEach((item) => {
+    item.classList.remove("is-linked");
+  });
+  const paragraph = document.querySelector(`#story-p-${paragraphNumber}`);
+  if (paragraph) {
+    paragraph.classList.add("is-linked");
+    paragraph.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+/**
+ * Actualiza la URL al parrafo tocado sin reabrir el relato; sirve para copiar enlaces exactos.
+ */
+function markParagraphRoute(paragraphNumber) {
+  if (!currentStoryId) return;
+  history.replaceState(null, "", getStoryRoute(currentStoryId, paragraphNumber));
+  scrollToStoryParagraph(paragraphNumber);
+}
+
+/**
  * Controla el fondo visual global segun la categoria activa.
  * Chismes usa una imagen distinta tanto en listado como en modo lectura.
  */
@@ -209,7 +256,7 @@ async function loadStories() {
 
     relatos = await Promise.all(storyRequests);
     relatos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    renderStories();
+    handleRoute();
   } catch (error) {
     storyList.innerHTML = `
       <p class="load-error">
@@ -247,6 +294,18 @@ function renderStories(filter = "todos") {
 }
 
 /**
+ * Abre una categoria desde rutas compartibles y sincroniza los botones activos.
+ */
+function openCategory(category) {
+  filterButtons.forEach((item) => {
+    item.classList.toggle("is-active", item.dataset.filter === category);
+  });
+  reader.hidden = true;
+  renderStories(category);
+  document.querySelector("#relatos").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/**
  * Refresca los metadatos traducibles del lector sin cambiar el texto del relato.
  */
 function refreshReaderMetadata(storyId) {
@@ -268,12 +327,15 @@ function openStory(storyId) {
   readerCategory.textContent = getCategoryLabel(story.categoria);
   readerTitle.textContent = story.titulo;
   readerDate.textContent = formatDate(story.fecha);
-  readerBody.innerHTML = story.contenido.map((paragraph) => `<p>${paragraph}</p>`).join("");
+  readerBody.innerHTML = story.contenido.map((paragraph, index) => `
+    <p id="story-p-${index + 1}" class="story-paragraph" data-paragraph="${index + 1}">${paragraph}</p>
+  `).join("");
 
   contentBand.hidden = true;
   submission.hidden = true;
   reader.hidden = false;
   setPageBackground({ filter: story.categoria, readerOpen: true });
+  updateRoute(getStoryRoute(story.id));
   reader.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -286,6 +348,7 @@ function closeReader() {
   contentBand.hidden = false;
   submission.hidden = true;
   setPageBackground({ filter: activeFilter, readerOpen: false });
+  updateRoute(getCategoryRoute(activeFilter));
   document.querySelector("#relatos").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -298,7 +361,38 @@ function openSubmissionForm() {
   submission.hidden = false;
   setPageBackground({ filter: "chismes", readerOpen: false });
   pageBody.classList.add("is-submission-open");
+  updateRoute("#your-story");
   submission.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/**
+ * Lee la ruta hash actual y abre inicio, categoria, formulario, relato o parrafo especifico.
+ */
+function handleRoute() {
+  const route = window.location.hash.replace(/^#/, "");
+  const parts = route.split("/").filter(Boolean);
+
+  isRouting = true;
+
+  if (parts[0] === "relato" && parts[1]) {
+    openStory(parts[1]);
+    if (parts[2] === "p" && parts[3]) {
+      requestAnimationFrame(() => scrollToStoryParagraph(parts[3]));
+    }
+  } else if (parts[0] === "categoria" && (parts[1] === "ultratumba" || parts[1] === "chismes")) {
+    openCategory(parts[1]);
+  } else if (route === "your-story") {
+    openSubmissionForm();
+  } else {
+    filterButtons.forEach((item) => {
+      item.classList.toggle("is-active", item.dataset.filter === "todos");
+    });
+    reader.hidden = true;
+    submission.hidden = true;
+    renderStories("todos");
+  }
+
+  isRouting = false;
 }
 
 /**
@@ -349,7 +443,13 @@ function downloadStoryJson(event) {
 // Detecta clicks en los botones de cada tarjeta y abre el relato correspondiente.
 storyList.addEventListener("click", (event) => {
   const button = event.target.closest("[data-story-id]");
-  if (button) openStory(button.dataset.storyId);
+  if (button) updateRoute(getStoryRoute(button.dataset.storyId));
+});
+
+// Al tocar un parrafo del lector, la URL queda apuntando exactamente a esa parte del relato.
+readerBody.addEventListener("click", (event) => {
+  const paragraph = event.target.closest("[data-paragraph]");
+  if (paragraph) markParagraphRoute(paragraph.dataset.paragraph);
 });
 
 // Conecta el boton de volver con la funcion que cierra el lector.
@@ -367,10 +467,10 @@ languageToggle.addEventListener("click", () => {
 // Activa los filtros de categoria y vuelve a pintar la lista segun el filtro elegido.
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    filterButtons.forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
-    closeReader();
-    renderStories(button.dataset.filter);
+    currentStoryId = null;
+    reader.hidden = true;
+    updateRoute(getCategoryRoute(button.dataset.filter));
+    handleRoute();
   });
 });
 
@@ -384,22 +484,24 @@ sectionLinks.forEach((link) => {
       reader.hidden = true;
       contentBand.hidden = false;
       submission.hidden = true;
+      updateRoute("#inicio");
       setPageBackground({ filter: "todos", readerOpen: false });
     }
     if (section === "your-story") {
       event.preventDefault();
-      openSubmissionForm();
+      updateRoute("#your-story");
+      handleRoute();
     }
     if (section === "ultratumba" || section === "chismes") {
       event.preventDefault();
-      filterButtons.forEach((item) => {
-        item.classList.toggle("is-active", item.dataset.filter === section);
-      });
-      closeReader();
-      renderStories(section);
+      updateRoute(getCategoryRoute(section));
+      handleRoute();
     }
   });
 });
+
+// Permite abrir rutas compartidas manualmente o desde enlaces externos como Facebook.
+window.addEventListener("hashchange", handleRoute);
 
 // Inicia la interfaz con el idioma guardado y luego carga los relatos desde los archivos JSON.
 applyLanguage();

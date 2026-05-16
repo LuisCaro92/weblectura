@@ -56,6 +56,16 @@ Como el sitio es estatico, el navegador no puede escribir archivos directamente 
 
 El boton `ES / EN` del nav cambia el idioma de los textos propios de la interfaz: navegacion, portada, filtros, formulario, botones y mensajes. Los relatos se mantienen en el idioma original por ahora; la traduccion del contenido de cada relato queda preparada como una mejora futura.
 
+## Rutas compartibles
+
+El sitio usa rutas con `#` para funcionar bien en GitHub Pages sin backend:
+
+- Categoria: `#categoria/ultratumba` o `#categoria/chismes`
+- Relato completo: `#relato/id-del-relato`
+- Parte especifica de un relato: `#relato/id-del-relato/p/12`
+
+Al abrir un relato, cada parrafo recibe un numero. Si tocas un parrafo mientras lees, la URL se actualiza a ese punto exacto para poder copiarla y compartirla, por ejemplo desde Facebook.
+
 ## Google Ads
 
 Cuando Google AdSense entregue el codigo, reemplaza el bloque `.ad-slot` en `index.html` por el bloque oficial de anuncio. Tambien puedes pegar el script de AdSense en el `<head>`.
