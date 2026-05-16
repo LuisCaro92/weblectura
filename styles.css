@@ -150,7 +150,7 @@ a {
   padding: 0.45rem 0.75rem;
   color: var(--muted);
   font-family: Arial, sans-serif;
-  font-size: 1rem;
+  font-size: 1.08rem;
 }
 
 /* Estado hover y activo de la navegacion. */
@@ -233,7 +233,7 @@ main {
 .story-category {
   margin: 0 0 0.6rem;
   color: var(--warn);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -426,7 +426,7 @@ body.is-reader-open .reader {
 .story-card p {
   margin: 0;
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: 1.13rem;
 }
 
 /* Boton de cada tarjeta para abrir el lector. */
@@ -441,6 +441,7 @@ body.is-reader-open .reader {
   color: var(--accent-strong);
   cursor: pointer;
   font-family: Arial, sans-serif;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
@@ -461,7 +462,7 @@ body.is-reader-open .reader {
 
 /* Cuerpo del relato con tamano de lectura comodo. */
 .story-body {
-  font-size: clamp(1.15rem, 2vw, 1.32rem);
+  font-size: clamp(1.24rem, 2vw, 1.42rem);
   max-width: 76ch;
 }
 
@@ -535,7 +536,7 @@ body.is-reader-open .reader {
 
   .nav a {
     padding: 0.22rem 0.45rem;
-    font-size: 0.84rem;
+    font-size: 0.9rem;
     line-height: 1.15;
     white-space: nowrap;
   }
@@ -572,7 +573,7 @@ body.is-reader-open .reader {
 
   .nav a {
     padding: 0.18rem 0.38rem;
-    font-size: 0.8rem;
+    font-size: 0.86rem;
   }
 }
 
