@@ -1,20 +1,5 @@
-/* Variables del tema claro: colores, superficies, lineas y sombra global. */
+/* Variables base del sitio: se deja solo tema oscuro para mantener identidad visual. */
 :root {
-  color-scheme: light;
-  --bg: #fbfaf7;
-  --surface: #ffffff;
-  --surface-soft: #f1f4ef;
-  --text: #191a1c;
-  --muted: #62666d;
-  --line: #d9ded7;
-  --accent: #2d6b57;
-  --accent-strong: #174534;
-  --warn: #9f5b2a;
-  --shadow: 0 18px 40px rgba(17, 24, 39, 0.08);
-}
-
-/* Variables del tema oscuro: se activan cuando JavaScript cambia data-theme. */
-:root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #101214;
   --surface: #181b1f;
@@ -151,7 +136,6 @@ a {
 /* Estilo compartido para controles clicables con forma de pastilla. */
 .nav a,
 .filter-button,
-.theme-toggle,
 .back-button,
 .story-form button {
   border: 1px solid transparent;
@@ -173,22 +157,6 @@ a {
 .nav a.is-active {
   background: var(--surface-soft);
   color: var(--text);
-}
-
-/* Boton que alterna entre modo claro y oscuro. */
-.theme-toggle {
-  display: grid;
-  width: 2.35rem;
-  height: 2.35rem;
-  place-items: center;
-  background: var(--surface);
-  border-color: var(--line);
-  color: var(--text);
-}
-
-/* Asegura que el icono del tema use una fuente simple. */
-.theme-icon {
-  font-family: Arial, sans-serif;
 }
 
 /* Contenedor principal con ancho maximo centrado. */
@@ -515,13 +483,6 @@ body.is-reader-open .reader {
     font-size: 0.66rem;
   }
 
-  .theme-toggle {
-    grid-column: 2;
-    grid-row: 1;
-    width: 1.8rem;
-    height: 1.8rem;
-  }
-
   .nav {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -564,11 +525,6 @@ body.is-reader-open .reader {
     width: 1.6rem;
     height: 1.6rem;
     font-size: 0.6rem;
-  }
-
-  .theme-toggle {
-    width: 1.65rem;
-    height: 1.65rem;
   }
 
   .nav a {

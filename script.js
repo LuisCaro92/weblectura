@@ -7,12 +7,8 @@ const categoryLabels = {
   chismes: "Chismes"
 };
 
-// Configura el tema inicial usando la preferencia guardada o el modo del sistema.
-const root = document.documentElement;
+// Guarda una referencia al body para activar estados visuales de lectura, chismes y formulario.
 const pageBody = document.body;
-const savedTheme = localStorage.getItem("theme");
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-root.dataset.theme = savedTheme || (prefersDark ? "dark" : "light");
 
 // Guarda referencias a los elementos del DOM que se actualizan desde JavaScript.
 const storyList = document.querySelector("#storyList");
@@ -32,13 +28,6 @@ const storyContent = document.querySelector("#storyContent");
 const submissionResult = document.querySelector("#submissionResult");
 
 document.querySelector("#year").textContent = new Date().getFullYear();
-
-// Cambia entre tema claro y oscuro, y guarda la eleccion para futuras visitas.
-document.querySelector("#themeToggle").addEventListener("click", () => {
-  const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
-  root.dataset.theme = nextTheme;
-  localStorage.setItem("theme", nextTheme);
-});
 
 /**
  * Convierte una fecha en formato YYYY-MM-DD a una fecha larga en espanol de Chile.
