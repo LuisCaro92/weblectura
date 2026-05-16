@@ -70,7 +70,7 @@ Al abrir un relato, cada parrafo recibe un numero. Si tocas un parrafo mientras 
 
 ## Google Ads
 
-Cuando Google AdSense entregue el codigo, reemplaza el bloque `.ad-slot` en `index.html` por el bloque oficial de anuncio. Tambien puedes pegar el script de AdSense en el `<head>`.
+El sitio no incluye un espacio publicitario manual visible. Para usar anuncios automaticos, pega el script de Google AdSense en el `<head>` y deja que Google decida las ubicaciones.
 
 ## GitHub Pages
 

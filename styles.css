@@ -59,14 +59,12 @@ body.is-chismes-theme::before {
 
 /* Modo lectura: al abrir un relato se oculta todo lo que distrae, excepto nav y texto. */
 body.is-reader-open .intro,
-body.is-reader-open .ad-slot,
 body.is-reader-open .site-footer {
   display: none;
 }
 
-/* Modo formulario: oculta portada y anuncios para enfocar la carga de una nueva historia. */
-body.is-submission-open .intro,
-body.is-submission-open .ad-slot {
+/* Modo formulario: oculta portada para enfocar la carga de una nueva historia. */
+body.is-submission-open .intro {
   display: none;
 }
 
@@ -218,7 +216,6 @@ main {
 .panel-label,
 .story-category,
 .story-date,
-.ad-slot,
 .site-footer,
 .filter-button,
 .language-toggle,
@@ -237,19 +234,6 @@ main {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-/* Espacio reservado para publicidad con transparencia leve para que respire el fondo. */
-.ad-slot {
-  display: grid;
-  min-height: 5.8rem;
-  margin: 1rem 0 2.5rem;
-  place-items: center;
-  border: 1px dashed var(--line);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  color: var(--muted);
-  font-size: 0.9rem;
 }
 
 /* Separacion vertical comun para biblioteca y lector. */
