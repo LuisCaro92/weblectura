@@ -177,11 +177,11 @@ a {
   background: var(--surface-soft);
 }
 
-/* Contenedor principal con ancho maximo centrado. */
+/* Contenedor principal con ancho mas amplio para aprovechar mejor la pantalla. */
 main {
   position: relative;
   z-index: 1;
-  width: min(1120px, calc(100% - 2rem));
+  width: min(1340px, calc(100% - 1.5rem));
   margin: 0 auto;
 }
 
@@ -446,7 +446,7 @@ body.is-reader-open .reader {
 
 /* Contenedor del relato completo sin card: deja ver el fondo global al leer. */
 .story-view {
-  max-width: 760px;
+  max-width: 900px;
   margin: 1.5rem auto 0;
   padding: clamp(0.5rem, 3vw, 1rem) 0 clamp(1rem, 4vw, 2rem);
   color: #f7f4ec;
@@ -462,7 +462,7 @@ body.is-reader-open .reader {
 /* Cuerpo del relato con tamano de lectura comodo. */
 .story-body {
   font-size: clamp(1.15rem, 2vw, 1.32rem);
-  max-width: 68ch;
+  max-width: 76ch;
 }
 
 /* Separacion entre parrafos del relato completo. */
