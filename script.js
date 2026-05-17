@@ -274,15 +274,19 @@ function setPageBackground({ filter = activeFilter, readerOpen = false } = {}) {
 }
 
 /**
- * Carga el indice de relatos, descarga cada archivo JSON, ordena los relatos por fecha
- * y luego pinta el destacado y la grilla principal. Si algo falla, muestra un error.
+ * Carga el indice del idioma activo, descarga cada archivo JSON, ordena los relatos
+ * por fecha y luego pinta la vista actual. Si algo falla, muestra un error.
  */
 async function loadStories() {
   try {
     const response = await fetch("relatos/relatos.json");
     if (!response.ok) throw new Error("No se pudo cargar el indice de relatos.");
 
-    const storyFiles = await response.json();
+    const storyIndex = await response.json();
+    const storyFiles = Array.isArray(storyIndex)
+      ? storyIndex
+      : storyIndex[currentLanguage] || storyIndex.en || [];
+
     const storyRequests = storyFiles.map(async (file) => {
       const storyResponse = await fetch(file);
       if (!storyResponse.ok) throw new Error(`No se pudo cargar ${file}.`);
@@ -494,6 +498,8 @@ storyForm.addEventListener("submit", saveSubmittedStory);
 languageToggle.addEventListener("click", () => {
   currentLanguage = currentLanguage === "es" ? "en" : "es";
   applyLanguage();
+  currentStoryId = null;
+  loadStories();
 });
 
 // Activa los filtros de categoria y vuelve a pintar la lista segun el filtro elegido.

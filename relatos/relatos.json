@@ -1,7 +1,12 @@
-[
-  "relatos/ultratumba/la-casa-del-final.json",
-  "relatos/ultratumba/la-casa-que-aparecia-en-zillow.json",
-  "relatos/ultratumba/la-transmision-del-canal-9.json",
-  "relatos/ultratumba/los-chicos-del-pasillo-c.json",
-  "relatos/ultratumba/el-ultimo-bus-de-hollow-creek.json"
-]
+{
+  "en": [
+    "relatos/en/ultratumba/whatever-lives-behind-the-walmart.json"
+  ],
+  "es": [
+    "relatos/ultratumba/la-casa-del-final.json",
+    "relatos/ultratumba/la-casa-que-aparecia-en-zillow.json",
+    "relatos/ultratumba/la-transmision-del-canal-9.json",
+    "relatos/ultratumba/los-chicos-del-pasillo-c.json",
+    "relatos/ultratumba/el-ultimo-bus-de-hollow-creek.json"
+  ]
+}
