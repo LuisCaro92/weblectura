@@ -11,6 +11,7 @@
   --accent-strong: #bcebd7;
   --warn: #e4b072;
   --shadow: 0 18px 42px rgba(0, 0, 0, 0.25);
+  --story-bg-image: url("assets/hero-la-casa-del-final.jpg");
 }
 
 /* Ajuste universal para que padding y borde no rompan los anchos definidos. */
@@ -55,6 +56,14 @@ body.is-chismes-theme::before {
     linear-gradient(180deg, rgba(10, 9, 13, 0.58), rgba(10, 9, 13, 0.72)),
     linear-gradient(90deg, rgba(10, 9, 13, 0.72), rgba(10, 9, 13, 0.26) 56%, rgba(10, 9, 13, 0.56)),
     url("assets/hero-chismes.jpg") center / cover no-repeat;
+}
+
+/* Fondo especifico de un relato: si el JSON define imagen, reemplaza el fondo de categoria. */
+body.has-story-background::before {
+  background:
+    linear-gradient(180deg, rgba(8, 12, 13, 0.62), rgba(8, 12, 13, 0.74)),
+    linear-gradient(90deg, rgba(8, 12, 13, 0.78), rgba(8, 12, 13, 0.28) 56%, rgba(8, 12, 13, 0.56)),
+    var(--story-bg-image) center / cover no-repeat;
 }
 
 /* Modo lectura: al abrir un relato se oculta todo lo que distrae, excepto nav y texto. */

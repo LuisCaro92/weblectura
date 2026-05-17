@@ -266,11 +266,18 @@ function markParagraphRoute(paragraphNumber) {
  * Controla el fondo visual global segun la categoria activa.
  * Chismes usa una imagen distinta tanto en listado como en modo lectura.
  */
-function setPageBackground({ filter = activeFilter, readerOpen = false } = {}) {
+function setPageBackground({ filter = activeFilter, readerOpen = false, image = "" } = {}) {
   pageBody.classList.toggle("is-chismes-list", filter === "chismes");
   pageBody.classList.toggle("is-chismes-theme", filter === "chismes");
   pageBody.classList.toggle("is-reader-open", readerOpen);
+  pageBody.classList.toggle("has-story-background", Boolean(readerOpen && image));
   pageBody.classList.remove("is-submission-open");
+
+  if (readerOpen && image) {
+    pageBody.style.setProperty("--story-bg-image", `url("${image}")`);
+  } else {
+    pageBody.style.removeProperty("--story-bg-image");
+  }
 }
 
 /**
@@ -373,7 +380,7 @@ function openStory(storyId) {
   contentBand.hidden = true;
   submission.hidden = true;
   reader.hidden = false;
-  setPageBackground({ filter: story.categoria, readerOpen: true });
+  setPageBackground({ filter: story.categoria, readerOpen: true, image: story.imagen });
   updateRoute(getStoryRoute(story.id));
   reader.scrollIntoView({ behavior: "smooth", block: "start" });
 }
