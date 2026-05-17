@@ -63,7 +63,8 @@ body.has-story-background::before {
   background:
     linear-gradient(180deg, rgba(8, 12, 13, 0.62), rgba(8, 12, 13, 0.74)),
     linear-gradient(90deg, rgba(8, 12, 13, 0.78), rgba(8, 12, 13, 0.28) 56%, rgba(8, 12, 13, 0.56)),
-    var(--story-bg-image) center / cover no-repeat;
+    var(--story-bg-image) center / 92% auto no-repeat,
+    #101214;
 }
 
 /* Modo lectura: al abrir un relato se oculta todo lo que distrae, excepto nav y texto. */
